@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supabase Connection Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Supabase 연결 테스트</h1>
+    <button onclick="testFunction()">함수 테스트</button>
+    <button onclick="testDirect()">직접 INSERT 테스트</button>
+    <div id="result"></div>
+    
+    <script>
+        const { createClient } = supabase;
+        const client = createClient(
+            'https://tdedaytbckiqfmbsspxp.supabase.co',
+            'sb_publishable_o3CXkryfFqseicG6N_y_bQ_ppjMWUfM'
+        );
+        
+        async function testFunction() {
+            const { data, error } = await client.rpc('create_test_session', {
+                p_device_info: { test: true, timestamp: new Date().toISOString() }
+            });
+            
+            document.getElementById('result').innerHTML = error 
+                ? `<p class="error">함수 에러: ${error.message}</p>`
+                : `<p class="success">성공! Session ID: ${data}</p>`;
+        }
+        
+        async function testDirect() {
+            const { data, error } = await client
+                .from('test_sessions')
+                .insert({ device_info: { test: true } })
+                .select();
+                
+            document.getElementById('result').innerHTML = error 
+                ? `<p class="error">INSERT 에러: ${error.message}</p>`
+                : `<p class="success">성공! ${JSON.stringify(data)}</p>`;
+        }
+    </script>
+</body>
+</html>
