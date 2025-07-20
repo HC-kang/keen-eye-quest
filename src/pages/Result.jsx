@@ -124,54 +124,7 @@ export default function Result() {
           </div>
         </div>
 
-        {/* 추천 해상도 */}
-        <div className="mt-8 card p-6 space-y-4 animate-fade-in">
-          <h2 className="text-xl font-bold text-gray-900">맞춤 해상도 추천</h2>
-          <div className="bg-green-50 text-green-900 p-4 rounded-lg">
-            <p className="font-semibold mb-2">
-              당신의 {results.deviceType === 'mobile' ? '모바일' : 
-                     results.deviceType === 'tablet' ? '태블릿' : '데스크톱'}에 최적화된 해상도
-            </p>
-            <p className="text-2xl font-bold">{results.recommendation}</p>
-            <p className="text-sm text-green-700 mt-2">
-              화질과 데이터 사용량의 최적 균형점입니다
-            </p>
-          </div>
-        </div>
 
-        {/* 카테고리별 점수 */}
-        <div className="mt-8 space-y-4">
-          <h2 className="text-xl font-bold text-gray-900">카테고리별 성적</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            {Object.entries(results.dbData.category_scores).map(([category, accuracy]) => {
-              const percentage = Math.round(accuracy * 100)
-              const categoryNames = {
-                product: '제품',
-                human: '인물',
-                nature: '자연'
-              }
-              return (
-                <div key={category} className="card p-6 space-y-3">
-                  <h3 className="font-semibold text-gray-900">
-                    {categoryNames[category]}
-                  </h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">정답률</span>
-                      <span className="font-medium text-gray-900">{percentage}%</span>
-                    </div>
-                    <div className="progress-bar">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
 
         {/* 액션 버튼 */}
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
