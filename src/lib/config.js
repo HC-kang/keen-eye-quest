@@ -4,6 +4,11 @@ export const supabaseConfig = {
   anonKey: 'sb_publishable_o3CXkryfFqseicG6N_y_bQ_ppjMWUfM'
 }
 
+// Kakao Configuration
+export const kakaoConfig = {
+  appKey: '64871bc35c3a6a342379c6497921725f' // Kakao Developers에서 발급받은 JavaScript 키
+}
+
 // Test Configuration
 export const testConfig = {
   totalQuestions: 25,

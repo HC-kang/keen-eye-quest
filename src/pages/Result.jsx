@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { updateTestSession } from '../lib/supabase'
 import { generateUserResults } from '../lib/analytics'
 import { detectDeviceInfo } from '../lib/test-utils'
+import { initKakao, shareKakao } from '../lib/kakao'
 
 export default function Result() {
   const { id } = useParams()
@@ -11,6 +12,7 @@ export default function Result() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    initKakao() // Kakao SDK 초기화
     calculateResults()
   }, [id])
 
@@ -126,8 +128,27 @@ export default function Result() {
 
 
 
+        {/* 공유하기 버튼 */}
+        <div className="mt-8 card p-6 bg-yellow-50 text-center">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            친구에게 추천하기
+          </h3>
+          <button
+            onClick={() => shareKakao(results.score, results.percentile)}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-medium rounded-lg transition-colors"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 2C5.58172 2 2 4.92157 2 8.46154C2 10.7308 3.42857 12.7179 5.57143 13.9487C5.42857 14.5128 4.71429 16.8718 4.64286 17.1026C4.64286 17.1026 4.64286 17.2564 4.71429 17.3333C4.78571 17.4103 4.92857 17.3333 4.92857 17.3333C5.21429 17.2564 8.07143 15.4872 8.71429 15.1026C9.14286 15.1795 9.57143 15.2308 10 15.2308C14.4183 15.2308 18 12.3103 18 8.76923C18 5.22821 14.4183 2 10 2Z" fill="currentColor"/>
+            </svg>
+            카카오톡으로 공유하기
+          </button>
+          <p className="text-sm text-gray-600 mt-3">
+            내 점수를 친구들과 비교해보세요!
+          </p>
+        </div>
+
         {/* 액션 버튼 */}
-        <div className="mt-8 flex flex-col sm:flex-row gap-4">
+        <div className="mt-6 flex flex-col sm:flex-row gap-4">
           <button
             onClick={() => navigate('/')}
             className="btn-secondary flex-1"
