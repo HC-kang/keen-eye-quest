@@ -30,10 +30,26 @@ export default function Test() {
     }
   }, [])
 
-  // 개발자 도구 감지
+  // 개발자 도구 감지 (프로덕션 환경에서만)
   useEffect(() => {
-    const threshold = 160
+    if (import.meta.env.DEV) {
+      // 개발 환경에서는 개발자 도구 허용
+      return
+    }
+
+    // 모바일 디바이스 체크
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    
+    // 데스크톱과 모바일에 다른 threshold 적용
+    const threshold = isMobile ? 300 : 160
+    
+    // 개발자 도구 감지 함수
     const devToolsCheck = () => {
+      // 모바일에서는 크기 기반 감지 스킵 (너무 많은 오탐지)
+      if (isMobile) {
+        return
+      }
+      
       if (
         window.outerHeight - window.innerHeight > threshold ||
         window.outerWidth - window.innerWidth > threshold
@@ -44,14 +60,16 @@ export default function Test() {
       }
     }
 
-    // 초기 체크
-    devToolsCheck()
+    // 초기 체크 (약간의 딜레이 후 실행)
+    setTimeout(devToolsCheck, 1000)
 
-    // 지속적인 체크
-    const interval = setInterval(devToolsCheck, 500)
+    // 지속적인 체크 (모바일이 아닌 경우만)
+    const interval = !isMobile ? setInterval(devToolsCheck, 500) : null
 
-    // Resize 이벤트 감지
-    window.addEventListener('resize', devToolsCheck)
+    // Resize 이벤트 감지 (모바일에서는 스킵)
+    if (!isMobile) {
+      window.addEventListener('resize', devToolsCheck)
+    }
 
     // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C 차단
     const handleKeyDown = (e) => {
@@ -65,18 +83,24 @@ export default function Test() {
       }
     }
 
-    // 우클릭 차단
+    // 우클릭 차단 (모바일에서는 롱터치 메뉴로 필요할 수 있음)
     const handleContextMenu = (e) => {
-      e.preventDefault()
-      return false
+      if (!isMobile) {
+        e.preventDefault()
+        return false
+      }
     }
 
     document.addEventListener('keydown', handleKeyDown)
     document.addEventListener('contextmenu', handleContextMenu)
 
     return () => {
-      clearInterval(interval)
-      window.removeEventListener('resize', devToolsCheck)
+      if (interval) {
+        clearInterval(interval)
+      }
+      if (!isMobile) {
+        window.removeEventListener('resize', devToolsCheck)
+      }
       document.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('contextmenu', handleContextMenu)
     }
